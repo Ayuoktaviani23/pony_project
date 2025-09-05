@@ -10,7 +10,7 @@ scaler = joblib.load("scaler_pony.joblib")
 # Konfigurasi halaman
 st.set_page_config(page_title="Pony Character Prediction", layout="centered")
 
-# CSS custom + animasi karakter
+# CSS custom + animasi modern
 st.markdown(
     """
     <style>
@@ -25,69 +25,38 @@ st.markdown(
         100% {background-position: 0% 50%;}
     }
 
-    .main {
-        background-color: #ffffffcc;
-        border-radius: 15px;
+    .result-card {
+        background: white;
+        border-radius: 20px;
         padding: 25px;
-        box-shadow: 0px 6px 15px rgba(0,0,0,0.1);
-    }
-
-    .prediction {
-        font-size: 26px;
-        font-weight: bold;
-        text-align: center;
         margin-top: 20px;
-        padding: 15px;
-        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        animation: fadeIn 1s ease-in-out;
     }
 
-    /* Fluttershy */
-    .fluttershy {
-        background: rgba(255, 236, 179, 0.8);
-        color: #ff69b4;
-        animation: flutter 2s infinite alternate;
-    }
-    @keyframes flutter {
-        from { transform: scale(1); }
-        to { transform: scale(1.1); }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Rainbow Dash */
-    .rainbow {
-        background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    .pony-name {
         font-size: 32px;
         font-weight: bold;
-        animation: rainbow 2s linear infinite;
-    }
-    @keyframes rainbow {
-        from { filter: hue-rotate(0deg); }
-        to { filter: hue-rotate(360deg); }
+        margin-bottom: 10px;
     }
 
-    /* Pinkie Pie */
-    .pinkie {
-        background: #ffe6f0;
-        color: #ff1493;
-        animation: bounce 1s infinite;
-    }
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+    .pony-desc {
+        font-size: 18px;
+        margin-top: 5px;
     }
 
-    /* Twilight Sparkle */
-    .twilight {
-        background: #d1c4e9;
-        color: #4a148c;
-        text-shadow: 0 0 10px #ba68c8, 0 0 20px #ab47bc;
-        animation: glow 2s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-        from { text-shadow: 0 0 5px #ba68c8, 0 0 10px #ab47bc; }
-        to { text-shadow: 0 0 20px #7b1fa2, 0 0 30px #6a1b9a; }
-    }
+    .rainbow { color: #ff5722; text-shadow: 0 0 10px #ff9800; }
+    .twilight { color: #6a1b9a; text-shadow: 0 0 10px #ab47bc; }
+    .pinkie { color: #e91e63; text-shadow: 0 0 10px #f48fb1; }
+    .rarity { color: #3f51b5; text-shadow: 0 0 10px #7986cb; }
+    .fluttershy { color: #ffb300; text-shadow: 0 0 10px #ffd54f; }
+    .applejack { color: #795548; text-shadow: 0 0 10px #a1887f; }
     </style>
     """,
     unsafe_allow_html=True
@@ -131,21 +100,38 @@ if st.button("🔮 Lihat Hasil"):
     with st.spinner("🔮 Meramal kepribadianmu..."):
         time.sleep(2)
 
-    # Efek animasi sesuai karakter
+    # Card hasil
+    pony_class = "rarity"
+    desc = "✨ Kamu unik, seperti pony spesial lainnya! ✨"
+
     if "Rainbow" in prediksi:
-        st.markdown(f"<div class='prediction rainbow'>🌈 Kamu penuh energi seperti Rainbow Dash! 🚀</div>", unsafe_allow_html=True)
+        pony_class = "rainbow"
+        desc = "🌈 Penuh energi & berani seperti Rainbow Dash! 🚀"
     elif "Twilight" in prediksi:
-        st.markdown(f"<div class='prediction twilight'>📖 Pintar & bijak seperti Twilight Sparkle ✨</div>", unsafe_allow_html=True)
+        pony_class = "twilight"
+        desc = "📖 Pintar, bijak, dan suka belajar seperti Twilight Sparkle ✨"
     elif "Pinkie" in prediksi:
-        st.markdown(f"<div class='prediction pinkie'>🎉 Fun & ceria kayak Pinkie Pie! 🎂</div>", unsafe_allow_html=True)
+        pony_class = "pinkie"
+        desc = "🎉 Fun, ceria, dan suka pesta kayak Pinkie Pie! 🎂"
     elif "Rarity" in prediksi:
-        st.markdown("<div class='prediction'>💎 Elegan & stylish seperti Rarity 👗</div>", unsafe_allow_html=True)
+        pony_class = "rarity"
+        desc = "💎 Elegan, stylish, dan penuh kreativitas seperti Rarity 👗"
     elif "Fluttershy" in prediksi:
-        st.markdown(f"<div class='prediction fluttershy'>🌸 Lembut & penuh kasih sayang seperti Fluttershy 🦋</div>", unsafe_allow_html=True)
+        pony_class = "fluttershy"
+        desc = "🌸 Lembut, penyayang, dan penuh empati seperti Fluttershy 🦋"
     elif "Applejack" in prediksi:
-        st.markdown("<div class='prediction'>🍎 Jujur & pekerja keras seperti Applejack 🤠</div>", unsafe_allow_html=True)
-    else:
-        st.markdown("<div class='prediction'>✨ Kamu unik, seperti pony spesial lainnya! ✨</div>", unsafe_allow_html=True)
+        pony_class = "applejack"
+        desc = "🍎 Jujur, pekerja keras, dan sederhana seperti Applejack 🤠"
+
+    st.markdown(
+        f"""
+        <div class="result-card">
+            <div class="pony-name {pony_class}">{prediksi}</div>
+            <div class="pony-desc">{desc}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     # Progress bar + tingkat keyakinan
     st.progress(presentase)
