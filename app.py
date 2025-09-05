@@ -7,37 +7,86 @@ import time
 model = joblib.load("model_pony.joblib")
 scaler = joblib.load("scaler_pony.joblib")
 
-# CSS custom
+# Konfigurasi halaman
+st.set_page_config(page_title="Pony Character Prediction", layout="centered")
+
+# CSS custom + animasi karakter
 st.markdown(
     """
     <style>
     body {
-        background: linear-gradient(135deg, #f6d5f7 0%, #fbe9d7 100%);
+        background: linear-gradient(-45deg, #ffdde1, #ee9ca7, #fad0c4, #ffd1ff);
+        background-size: 400% 400%;
+        animation: gradientBG 10s ease infinite;
     }
+    @keyframes gradientBG {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
+    }
+
     .main {
         background-color: #ffffffcc;
         border-radius: 15px;
         padding: 25px;
         box-shadow: 0px 6px 15px rgba(0,0,0,0.1);
     }
-    .stButton button {
-        background: linear-gradient(90deg, #ff9aeb, #a97fff);
-        color: white;
-        border-radius: 10px;
-        padding: 10px 20px;
+
+    .prediction {
+        font-size: 26px;
         font-weight: bold;
-        border: none;
-        transition: 0.3s;
-    }
-    .stButton button:hover {
-        background: linear-gradient(90deg, #a97fff, #ff9aeb);
-        transform: scale(1.05);
-    }
-    footer {
         text-align: center;
-        margin-top: 40px;
-        font-size: 14px;
-        color: #555;
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    /* Fluttershy */
+    .fluttershy {
+        background: rgba(255, 236, 179, 0.8);
+        color: #ff69b4;
+        animation: flutter 2s infinite alternate;
+    }
+    @keyframes flutter {
+        from { transform: scale(1); }
+        to { transform: scale(1.1); }
+    }
+
+    /* Rainbow Dash */
+    .rainbow {
+        background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 32px;
+        font-weight: bold;
+        animation: rainbow 2s linear infinite;
+    }
+    @keyframes rainbow {
+        from { filter: hue-rotate(0deg); }
+        to { filter: hue-rotate(360deg); }
+    }
+
+    /* Pinkie Pie */
+    .pinkie {
+        background: #ffe6f0;
+        color: #ff1493;
+        animation: bounce 1s infinite;
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* Twilight Sparkle */
+    .twilight {
+        background: #d1c4e9;
+        color: #4a148c;
+        text-shadow: 0 0 10px #ba68c8, 0 0 20px #ab47bc;
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+        from { text-shadow: 0 0 5px #ba68c8, 0 0 10px #ab47bc; }
+        to { text-shadow: 0 0 20px #7b1fa2, 0 0 30px #6a1b9a; }
     }
     </style>
     """,
@@ -82,28 +131,27 @@ if st.button("🔮 Lihat Hasil"):
     with st.spinner("🔮 Meramal kepribadianmu..."):
         time.sleep(2)
 
-    # Hasil
-    st.markdown(f"<h2 style='color:#a020f0;'>✨ Kamu mirip dengan <b>{prediksi}</b>! ✨</h2>", unsafe_allow_html=True)
+    # Efek animasi sesuai karakter
+    if "Rainbow" in prediksi:
+        st.markdown(f"<div class='prediction rainbow'>🌈 Kamu penuh energi seperti Rainbow Dash! 🚀</div>", unsafe_allow_html=True)
+    elif "Twilight" in prediksi:
+        st.markdown(f"<div class='prediction twilight'>📖 Pintar & bijak seperti Twilight Sparkle ✨</div>", unsafe_allow_html=True)
+    elif "Pinkie" in prediksi:
+        st.markdown(f"<div class='prediction pinkie'>🎉 Fun & ceria kayak Pinkie Pie! 🎂</div>", unsafe_allow_html=True)
+    elif "Rarity" in prediksi:
+        st.markdown("<div class='prediction'>💎 Elegan & stylish seperti Rarity 👗</div>", unsafe_allow_html=True)
+    elif "Fluttershy" in prediksi:
+        st.markdown(f"<div class='prediction fluttershy'>🌸 Lembut & penuh kasih sayang seperti Fluttershy 🦋</div>", unsafe_allow_html=True)
+    elif "Applejack" in prediksi:
+        st.markdown("<div class='prediction'>🍎 Jujur & pekerja keras seperti Applejack 🤠</div>", unsafe_allow_html=True)
+    else:
+        st.markdown("<div class='prediction'>✨ Kamu unik, seperti pony spesial lainnya! ✨</div>", unsafe_allow_html=True)
+
+    # Progress bar + tingkat keyakinan
     st.progress(presentase)
     st.success(f"Tingkat keyakinan: {presentase*100:.2f}%")
 
-    # Efek animasi sesuai karakter
-    if "Rainbow" in prediksi:
-        st.markdown("🌈 WOW! Kamu penuh energi seperti Rainbow Dash! 🚀")
-    elif "Twilight" in prediksi:
-        st.markdown("📖 Pintar & bijak seperti Twilight Sparkle ✨")
-    elif "Pinkie" in prediksi:
-        st.markdown("🎉 Fun & ceria kayak Pinkie Pie! 🎂")
-    elif "Rarity" in prediksi:
-        st.markdown("💎 Elegan & stylish seperti Rarity 👗")
-    elif "Fluttershy" in prediksi:
-        st.markdown("🌸 Lembut & penuh kasih sayang seperti Fluttershy 🦋")
-    elif "Applejack" in prediksi:
-        st.markdown("🍎 Jujur & pekerja keras seperti Applejack 🤠")
-    else:
-        st.markdown("✨ Kamu unik, seperti pony spesial lainnya! ✨")
-
-    # Efek tambahan selain balon
+    # Efek tambahan
     st.snow()
     st.balloons()
 
@@ -112,4 +160,5 @@ st.sidebar.title("Tentang Quiz")
 st.sidebar.info("Quiz ini dibuat untuk seru-seruan ✨. Jawabanmu akan dibandingkan dengan kepribadian karakter di My Little Pony 🦄.")
 
 # Footer
-st.markdown("<footer>🌸 Dibuat dengan ❤️ oleh Aydes 🌸</footer>", unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:14px;'>🌸 Dibuat dengan ❤️ oleh Aydes 🌸</p>", unsafe_allow_html=True)
